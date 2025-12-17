@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Panel Administrador - Edición Total</title>
+<title>Panel Administrador - TECNO TREBOL</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
 <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
 
 <style>
-/* SE MANTIENE TU DISEÑO ORIGINAL */
+/* DISEÑO MANTENIDO */
 body{font-family:Arial;margin:0;background:#f5f5f5;color:#222}
 header{background:#8B0000;color:#fff;padding:10px 20px;box-shadow: 0 2px 10px rgba(0,0,0,0.1);}
 .header-container{max-width:1200px;margin:auto;display:flex;justify-content:space-between;align-items:center;}
@@ -22,7 +22,11 @@ input, textarea, select{width:100%;padding:12px;border:1px solid #bbb;border-rad
 .card img{width:100%;height:180px;object-fit:cover;border-radius:8px;}
 #loginOverlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);display:flex;justify-content:center;align-items:center;z-index:1000;}
 #loginBox{background:white;padding:30px;border-radius:12px;text-align:center;width:300px;}
+
+/* BOTONES */
 .btn-red{background:#8B0000;color:white;border:0;padding:10px;border-radius:6px;cursor:pointer;width:100%;margin-top:10px;font-weight: bold;}
+.btn-view-desc{background:#0056b3;color:white;border:0;padding:8px;border-radius:6px;cursor:pointer;width:100%;margin-top:5px;font-size:12px;}
+.desc-container{display:none; margin-top:10px; font-size:12px; color:#555; background:#f9f9f9; padding:8px; border-radius:5px; text-align: left;}
 .edit-input{margin-bottom: 5px; font-size: 13px; padding: 8px;}
 </style>
 </head>
@@ -97,7 +101,9 @@ function cargarProductos() {
             <img src="${p.foto}" id="display-img-${id}">
             <h3 id="display-nombre-${id}">${p.nombre}</h3>
             <p id="display-precio-${id}" style="font-weight:bold; color:#8B0000;">${p.precio}</p>
-            <p id="display-desc-${id}" style="font-size:12px; color:#666;">${p.descripcion || ''}</p>
+            
+            <button class="btn-view-desc" onclick="toggleDesc('${id}')">Ver descripción</button>
+            <div id="display-desc-${id}" class="desc-container">${p.descripcion || 'Sin descripción'}</div>
             
             <div id="actions-${id}">
                 <button class="btn-red" style="background:#e6a500; margin-bottom:5px;" onclick="habilitarEdicion('${id}')">
@@ -111,6 +117,12 @@ function cargarProductos() {
       });
     }
   });
+}
+
+// FUNCIÓN PARA MOSTRAR/OCULTAR DESCRIPCIÓN
+function toggleDesc(id) {
+    const desc = document.getElementById(`display-desc-${id}`);
+    desc.style.display = (desc.style.display === "block") ? "none" : "block";
 }
 
 function habilitarEdicion(id) {
