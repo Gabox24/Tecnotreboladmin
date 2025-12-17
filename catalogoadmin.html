@@ -1,0 +1,441 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Panel Administrador</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<style>
+body{font-family:Arial;margin:0;background:#f5f5f5;color:#222}
+
+/* --- ESTILOS DEL HEADER ROJO --- */
+header{
+  background:#8B0000;
+  color:#fff;
+  padding:10px 20px; 
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+.header-container{
+  max-width:1200px;
+  margin:auto;
+  display:flex;
+  flex-wrap:wrap; 
+  align-items:center;
+  /* CENTRADO DE LA BARRA: Distribuye el espacio entre los elementos */
+  justify-content:space-between; 
+  gap:15px;
+}
+.header-title {
+  font-size: 22px;
+  font-weight: bold;
+  /* El título toma el mismo ancho que el espacio derecho para centrar la barra */
+  flex-basis: 150px; 
+  text-align: left;
+}
+.header-spacer {
+  /* Este div vacío equilibra el layout forzando la barra al centro */
+  flex-basis: 150px; 
+}
+/* ---------------------------------- */
+
+
+.container{max-width:1200px;margin:auto;padding:20px}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+  gap:20px;
+}
+
+.card{
+  background:#fff;
+  padding:14px;
+  border-radius:10px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.1);
+  min-height: 400px; 
+}
+
+/* TAMAÑO DE IMAGEN UNIFORME */
+.card img{
+  width:100%;
+  height:180px; 
+  object-fit:cover; 
+  border-radius:8px;
+}
+
+/* Estilo para el selector de URL/Archivo */
+.foto-opciones {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+}
+.foto-opciones label {
+    font-weight: normal;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+}
+
+/* --- ESTILOS DE BARRA DE BÚSQUEDA --- */
+.search-wrapper{
+  /* La barra se deja flexible para que se centre */
+  flex-grow: 1; 
+  max-width: 500px; 
+  margin: 0; 
+  position:relative;
+}
+.search-box{
+  background:#fff;
+  border-radius:25px;
+  display:flex;
+  padding:5px 15px;
+  align-items:center;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+.search-box input{
+  border:0;
+  outline:none;
+  width:100%;
+  padding:8px;
+  font-size:14px;
+}
+.search-box button{
+  background:#8B0000; 
+  color:white;
+  border:0;
+  border-radius:50%;
+  width:35px;
+  height:35px;
+  cursor:pointer;
+}
+
+/* Sugerencias de búsqueda (se mantienen, pero ocultas) */
+.sugerencias-box{
+  position:absolute;
+  top:100%;
+  left:0;
+  width:100%;
+  background:white;
+  color:#222;
+  border-radius:8px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.2);
+  z-index:100;
+  display:none;
+  margin-top:5px;
+  max-height:200px;
+  overflow-y:auto;
+}
+.sugerencia-item{padding:10px 15px;cursor:pointer;border-bottom:1px solid #eee;}
+.sugerencia-item:hover{background:#f0f0f0;}
+/* -------------------------------------- */
+
+
+/* Botones */
+.btn{padding:10px 12px;border-radius:8px;border:0;cursor:pointer;width:100%;margin-top:8px}
+.btn-edit{background:#e6a500;color:white;}
+.btn-delete{background:#b30000;color:white;}
+.btn-save{background:#008000;color:white;}
+.btn-cancel{background:#555;color:white;}
+
+/* Formulario */
+form{
+  background:#fff;
+  padding:25px;
+  border-radius:12px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.15);
+  margin-bottom:40px;
+  max-width:600px;
+  margin:auto;
+  display:none;
+}
+form label{
+  display:block;margin-top:15px;font-weight:bold;font-size:15px;
+}
+form input,form textarea,form select{
+  width:100%;padding:12px;border:1px solid #bbb;border-radius:8px;margin-top:6px;font-size:14px;
+}
+
+/* LOGIN */
+#loginOverlay{
+  position:fixed;
+  top:0;left:0;
+  width:100%;height:100%;
+  background:rgba(0,0,0,0.7);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  z-index:1000;
+}
+#loginBox{
+  background:white;
+  padding:30px;
+  border-radius:12px;
+  text-align:center;
+  width:300px;
+}
+#loginBox input{
+  width:100%;padding:10px;margin-top:10px;border-radius:6px;border:1px solid #aaa;
+}
+#loginBox button{
+  margin-top:15px;padding:10px;width:100%;background:#8B0000;color:white;border:0;border-radius:6px;cursor:pointer;
+}
+
+.edit-input{
+  width:100%;
+  padding:8px;
+  margin-top:5px;
+  border:1px solid #ccc;
+  border-radius:6px;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-container">
+    <div class="header-title">Panel Administrador</div>
+
+    <div class="search-wrapper" id="search-admin-wrapper" style="display:none;">
+        <div class="search-box">
+            <input type="text" id="busquedaInput" placeholder="Buscar producto a editar/eliminar..." onkeyup="buscarProducto()">
+            <button><i class="fas fa-search"></i></button>
+        </div>
+        <div id="sugerencias" class="sugerencias-box"></div>
+    </div>
+    
+    <div class="header-spacer"></div>
+  </div>
+</header>
+
+
+<div id="loginOverlay">
+  <div id="loginBox">
+    <h3>Acceso Admin</h3>
+    <input type="email" id="correoLogin" placeholder="Correo admin">
+    <button onclick="verificarCorreo()">Entrar</button>
+  </div>
+</div>
+
+<div class="container">
+
+<h2 id="tituloAdmin" style="display:none;text-align:center;color:#8B0000;margin-bottom:20px;">
+  Agregar nuevo producto
+</h2>
+
+<form id="form-producto">
+  <label>Nombre:</label>
+  <input id="nombre" required>
+
+  <label>Precio:</label>
+  <input id="precio" required>
+
+  <label>Descripción:</label>
+  <textarea id="descripcion"></textarea>
+
+  <label>Categoría:</label>
+  <select id="categoria">
+    <option value="telefonos">Teléfonos</option>
+    <option value="accesorios">Accesorios</option>
+    <option value="cornetas">Cornetas</option>
+    <option value="audifonos">Audífonos</option>
+  </select>
+  
+  <label>Foto:</label>
+  <div class="foto-opciones">
+    <label>
+      <input type="radio" name="foto_tipo" value="url" checked onchange="toggleFotoInput('url')"> URL
+    </label>
+    <label>
+      <input type="radio" name="foto_tipo" value="archivo" onchange="toggleFotoInput('archivo')"> Subir Archivo
+    </label>
+  </div>
+
+  <input id="foto-url" type="url" placeholder="Ej: http://tu-imagen.com/foto.jpg">
+  <input id="foto-archivo" type="file" accept="image/*" style="display:none;">
+  <input id="foto-data" type="hidden"> 
+
+
+  <button type="submit" style="margin-top:20px;background:#8B0000;color:white;">Agregar producto</button>
+</form>
+
+<div id="productos" class="grid"></div>
+
+</div>
+
+<script>
+const ADMIN_CORREO="gaboxxlopez28@gmail.com";
+let esAdmin=false;
+
+function verificarCorreo(){
+  const correo=document.getElementById("correoLogin").value.trim();
+
+  if(correo===ADMIN_CORREO){
+    esAdmin=true;
+    document.getElementById("loginOverlay").style.display="none";
+    document.getElementById("tituloAdmin").style.display="block";
+    document.getElementById("form-producto").style.display="block";
+    document.getElementById("search-admin-wrapper").style.display="flex"; 
+  }else{
+    alert("Acceso denegado");
+  }
+  renderProductos();
+}
+
+/* ----- LÓGICA DE FOTO ----- */
+function toggleFotoInput(tipo) {
+  document.getElementById("foto-url").style.display = (tipo === 'url' ? 'block' : 'none');
+  document.getElementById("foto-archivo").style.display = (tipo === 'archivo' ? 'block' : 'none');
+}
+
+document.getElementById('foto-archivo').addEventListener('change', function(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('foto-data').value = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+
+/* ----- CATÁLOGO ----- */
+const productos=JSON.parse(localStorage.getItem("catalogo"))||[];
+
+function guardar(){localStorage.setItem("catalogo",JSON.stringify(productos));}
+
+// Función de renderizado modificada para aceptar una lista filtrada
+function renderProductos(listaParaMostrar = productos){
+  const div=document.getElementById("productos");
+  div.innerHTML="";
+
+  listaParaMostrar.forEach((p,index)=>{
+    // Buscamos el índice original para que las funciones de guardar/eliminar funcionen
+    const originalIndex = productos.indexOf(p);
+    
+    const card=document.createElement("div");
+    card.className="card";
+
+    if(p.editando){
+      card.innerHTML=`
+        <input class="edit-input" id="editNombre${originalIndex}" value="${p.nombre}">
+        <input class="edit-input" id="editPrecio${originalIndex}" value="${p.precio}">
+        <textarea class="edit-input" id="editDescripcion${originalIndex}">${p.descripcion}</textarea>
+
+        <select class="edit-input" id="editCategoria${originalIndex}">
+          <option value="telefonos" ${p.categoria=="telefonos"?"selected":""}>Teléfonos</option>
+          <option value="accesorios" ${p.categoria=="accesorios"?"selected":""}>Accesorios</option>
+          <option value="cornetas" ${p.categoria=="cornetas"?"selected":""}>Cornetas</option>
+          <option value="audifonos" ${p.categoria=="audifonos"?"selected":""}>Audífonos</option>
+        </select>
+
+        <label style="margin-top:15px; font-weight:bold;">URL o Base64:</label>
+        <input class="edit-input" id="editFoto${originalIndex}" value="${p.foto}">
+
+        <button class="btn btn-save" onclick="guardarEdicion(${originalIndex})">Guardar</button>
+        <button class="btn btn-cancel" onclick="cancelarEdicion(${originalIndex})">Cancelar</button>
+      `;
+    } else {
+      card.innerHTML=`
+        <img src="${p.foto}">
+        <h3>${p.nombre}</h3>
+        <div class="price">${p.precio}</div>
+
+        <button class="btn btn-edit" onclick="editarProducto(${originalIndex})">Editar</button>
+        <button class="btn btn-delete" onclick="eliminarProducto(${originalIndex})">Eliminar</button>
+      `;
+    }
+
+    div.appendChild(card);
+  });
+}
+
+// Función de Búsqueda
+function buscarProducto() {
+  const input = document.getElementById("busquedaInput");
+  const filtro = input.value.toLowerCase();
+  
+  if (filtro.length === 0) {
+    renderProductos(productos); 
+    return;
+  }
+
+  // Filtra por nombre
+  const filtrados = productos.filter(p => p.nombre.toLowerCase().includes(filtro));
+  
+  renderProductos(filtrados); 
+}
+
+
+function editarProducto(i){
+  productos[i].editando=true;
+  renderProductos();
+}
+
+function cancelarEdicion(i){
+  productos[i].editando=false;
+  renderProductos();
+}
+
+function guardarEdicion(i){
+  productos[i].nombre=document.getElementById("editNombre"+i).value;
+  productos[i].precio=document.getElementById("editPrecio"+i).value;
+  productos[i].descripcion=document.getElementById("editDescripcion"+i).value;
+  productos[i].categoria=document.getElementById("editCategoria"+i).value;
+  productos[i].foto=document.getElementById("editFoto"+i).value;
+
+  productos[i].editando=false;
+  guardar();
+  renderProductos();
+}
+
+function eliminarProducto(i){
+  productos.splice(i,1);
+  guardar();
+  renderProductos();
+}
+
+/* AGREGAR PRODUCTO */
+document.getElementById("form-producto").addEventListener("submit",e=>{
+  e.preventDefault();
+  
+  let fotoValue = "";
+  const fotoTipo = document.querySelector('input[name="foto_tipo"]:checked').value;
+  
+  if (fotoTipo === 'url') {
+    fotoValue = document.getElementById("foto-url").value;
+  } else {
+    fotoValue = document.getElementById("foto-data").value; 
+  }
+  
+  if (!fotoValue) {
+      alert("Por favor, ingrese una URL o cargue un archivo de imagen.");
+      return;
+  }
+
+  const nuevo={
+    nombre:nombre.value,
+    precio:precio.value,
+    descripcion:descripcion.value,
+    categoria:categoria.value,
+    foto:fotoValue,
+    editando:false
+  };
+
+  productos.push(nuevo);
+  guardar();
+  renderProductos();
+  e.target.reset();
+  
+  document.getElementById("foto-archivo").value = ""; 
+  document.getElementById("foto-data").value = ""; 
+});
+
+toggleFotoInput('url');
+renderProductos();
+</script>
+
+</body>
+</html>
