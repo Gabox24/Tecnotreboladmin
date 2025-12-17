@@ -22,20 +22,33 @@ header{
   display:flex;
   flex-wrap:wrap; 
   align-items:center;
-  /* CENTRADO DE LA BARRA: Distribuye el espacio entre los elementos */
   justify-content:space-between; 
   gap:15px;
 }
 .header-title {
   font-size: 22px;
   font-weight: bold;
-  /* El título toma el mismo ancho que el espacio derecho para centrar la barra */
   flex-basis: 150px; 
   text-align: left;
 }
 .header-spacer {
-  /* Este div vacío equilibra el layout forzando la barra al centro */
   flex-basis: 150px; 
+}
+
+/* Estilo del enlace para ir a la página del cliente (AÑADIDO PARA CONEXIÓN) */
+.header-link {
+  color: white;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: bold;
+  padding: 5px 10px;
+  border: 1px solid white;
+  border-radius: 5px;
+  transition: background 0.3s;
+  white-space: nowrap; 
+}
+.header-link:hover {
+  background: rgba(255, 255, 255, 0.15);
 }
 /* ---------------------------------- */
 
@@ -79,7 +92,6 @@ header{
 
 /* --- ESTILOS DE BARRA DE BÚSQUEDA --- */
 .search-wrapper{
-  /* La barra se deja flexible para que se centre */
   flex-grow: 1; 
   max-width: 500px; 
   margin: 0; 
@@ -197,6 +209,10 @@ form input,form textarea,form select{
   <div class="header-container">
     <div class="header-title">Panel Administrador</div>
 
+    <a href="https://gabox24.github.io/Tecnotrebol/catalogocliente.html" target="_blank" class="header-link">
+      <i class="fas fa-eye"></i> Ver Catálogo Cliente
+    </a>
+    
     <div class="search-wrapper" id="search-admin-wrapper" style="display:none;">
         <div class="search-box">
             <input type="text" id="busquedaInput" placeholder="Buscar producto a editar/eliminar..." onkeyup="buscarProducto()">
