@@ -5,215 +5,91 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Admin - TECNO TREBOL</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
 <style>
-/* Estilos base para PC y Móvil */
-body{font-family:Arial, sans-serif;margin:0;background:#f5f5f5;color:#222}
-
-/* HEADER ROJO RESPONSIVO */
-header{
-  background:#8B0000;
-  color:#fff;
-  padding:12px 15px; 
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-}
-.header-container{
-  max-width:1200px;
-  margin:auto;
-  display:flex;
-  flex-wrap:wrap; 
-  align-items:center;
-  justify-content:space-between; 
-  gap:10px;
-}
-.header-title {
-  font-size: 20px;
-  font-weight: bold;
-}
-
-/* BOTÓN DE CONEXIÓN AL CLIENTE */
-.header-link {
-  color: white;
-  text-decoration: none;
-  font-size: 14px;
-  font-weight: bold;
-  padding: 6px 12px;
-  border: 1px solid white;
-  border-radius: 6px;
-  transition: background 0.3s;
-}
-.header-link:hover { background: rgba(255, 255, 255, 0.2); }
-
-/* BARRA DE BÚSQUEDA EN EL HEADER */
-.search-wrapper{
-  flex-grow: 1; 
-  min-width: 100%; /* Ocupa todo el ancho en móvil */
-  max-width: 450px; 
-  position:relative;
-  order: 3; /* Se posiciona abajo en móviles */
-}
-@media (min-width: 768px) {
-  .search-wrapper { min-width: 250px; order: 2; }
-  .header-title { font-size: 22px; }
-}
-
-.search-box{
-  background:#fff;
-  border-radius:25px;
-  display:flex;
-  padding:4px 12px;
-  align-items:center;
-  border: 1px solid #ccc;
-}
-.search-box input{border:0;outline:none;width:100%;padding:8px;font-size:14px;}
-.search-box button{background:#8B0000;color:white;border:0;border-radius:50%;width:32px;height:32px;cursor:pointer;}
-
-/* FORMULARIO Y CONTENEDOR */
+body{font-family:Arial,sans-serif;margin:0;background:#f5f5f5;color:#222}
+header{background:#8B0000;color:#fff;padding:12px;box-shadow:0 2px 10px rgba(0,0,0,0.1)}
+.header-container{max-width:1200px;margin:auto;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px}
+.header-link{color:white;text-decoration:none;font-size:14px;border:1px solid white;padding:6px 12px;border-radius:6px;font-weight:bold}
 .container{max-width:1200px;margin:auto;padding:15px}
-form{
-  background:#fff;
-  padding:20px;
-  border-radius:12px;
-  box-shadow:0 4px 12px rgba(0,0,0,0.15);
-  margin-bottom:30px;
-  display:none; /* Se oculta hasta el login */
-}
-form label{display:block;margin-top:10px;font-weight:bold;font-size:14px;}
-form input, form textarea, form select{
-  width:100%;padding:12px;border:1px solid #ccc;border-radius:8px;margin-top:5px;box-sizing:border-box;
-}
-
-/* CUADRÍCULA DE PRODUCTOS (ADMIN) */
-.grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
-  gap:15px;
-}
-@media (min-width: 768px) {
-  .grid { grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:20px; }
-}
-
-.card{
-  background:#fff;
-  padding:12px;
-  border-radius:10px;
-  box-shadow:0 2px 8px rgba(0,0,0,0.1);
-  text-align: center;
-}
-.card img{width:100%;height:140px;object-fit:cover;border-radius:6px;}
-
-/* BOTONES DE ACCIÓN */
-.btn-action{padding:10px;border-radius:6px;border:0;cursor:pointer;width:100%;margin-top:8px;font-weight:bold;color:white;}
-.btn-edit{background:#e6a500;}
-.btn-delete{background:#b30000;}
-
-/* LOGIN OVERLAY */
-#loginOverlay{
-  position:fixed;top:0;left:0;width:100%;height:100%;
-  background:rgba(0,0,0,0.9);display:flex;justify-content:center;align-items:center;z-index:2000;
-}
-#loginBox{background:white;padding:30px;border-radius:12px;width:280px;text-align:center;}
+form{background:#fff;padding:20px;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.15);margin-bottom:30px;display:none}
+input,textarea,select{width:100%;padding:12px;border:1px solid #ccc;border-radius:8px;margin-top:8px;box-sizing:border-box}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:15px}
+.card{background:#fff;padding:12px;border-radius:10px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.1)}
+.card img{width:100%;height:140px;object-fit:cover;border-radius:6px}
+#loginOverlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);display:flex;justify-content:center;align-items:center;z-index:2000}
+#loginBox{background:white;padding:30px;border-radius:12px;width:280px;text-align:center}
 </style>
 </head>
 <body>
-
 <header>
   <div class="header-container">
-    <div class="header-title">Panel Admin</div>
-
-    <a href="https://gabox24.github.io/Tecnotrebol/catalogocliente.html" target="_blank" class="header-link">
-      <i class="fas fa-eye"></i> Ver Tienda
-    </a>
-
-    <div class="search-wrapper" id="search-admin-wrapper" style="display:none;">
-        <div class="search-box">
-            <input type="text" id="busquedaInput" placeholder="Buscar producto..." onkeyup="buscar()">
-            <button><i class="fas fa-search"></i></button>
-        </div>
-    </div>
+    <strong>PANEL ADMIN</strong>
+    <a href="https://gabox24.github.io/Tecnotrebol/catalogocliente.html" target="_blank" class="header-link">VER TIENDA</a>
+    <input type="text" id="busquedaInput" placeholder="Buscar..." onkeyup="buscar()" style="width:150px;padding:5px;border-radius:20px;border:none">
   </div>
 </header>
-
-<div id="loginOverlay">
-  <div id="loginBox">
-    <h3>Acceso Admin</h3>
-    <input type="email" id="correoLogin" placeholder="Correo electrónico">
-    <button onclick="verificarCorreo()" style="width:100%;background:#8B0000;color:white;padding:12px;border:0;border-radius:8px;margin-top:15px;cursor:pointer;">Entrar</button>
-  </div>
-</div>
-
+<div id="loginOverlay"><div id="loginBox"><h3>Acceso Admin</h3><input type="email" id="correoLogin" placeholder="Email"><button onclick="verificarCorreo()" style="width:100%;background:#8B0000;color:white;padding:12px;border:0;border-radius:8px;margin-top:15px;cursor:pointer">Entrar</button></div></div>
 <div class="container">
   <form id="form-producto">
-    <h3 style="margin-top:0; text-align:center; color:#8B0000;">Agregar Nuevo Producto</h3>
-    <input id="nombre" placeholder="Nombre del producto" required>
+    <h3 style="margin-top:0;color:#8B0000;text-align:center">Nuevo Producto</h3>
+    <input id="nombre" placeholder="Nombre del Producto" required>
     <input id="precio" placeholder="Precio (ej: 100$)" required>
-    <textarea id="descripcion" placeholder="Descripción detallada"></textarea>
-    <select id="categoria">
-      <option value="telefonos">Teléfonos</option>
-      <option value="accesorios">Accesorios</option>
-      <option value="cornetas">Cornetas</option>
-      <option value="audifonos">Audífonos</option>
-    </select>
-    <input id="foto-url" placeholder="Pega aquí la URL de la imagen" required>
-    <button type="submit" style="background:#008000;color:white;padding:12px;width:100%;border:0;border-radius:8px;font-weight:bold;margin-top:10px;">GUARDAR PRODUCTO</button>
+    <textarea id="descripcion" placeholder="Descripción del producto"></textarea>
+    <input id="foto-url" placeholder="URL de la Imagen" required>
+    <button type="submit" style="background:green;color:white;padding:12px;width:100%;border:0;margin-top:10px;border-radius:8px;font-weight:bold;cursor:pointer">GUARDAR EN LA NUBE</button>
   </form>
-
   <div id="productos" class="grid"></div>
 </div>
-
 <script>
-const ADMIN_CORREO="gaboxxlopez28@gmail.com";
-let productos = JSON.parse(localStorage.getItem("catalogo")) || [];
+const URL_DB = "https://tecnotrebol-67a34-default-rtdb.firebaseio.com/productos.json";
+const ADMIN = "gaboxxlopez28@gmail.com";
+let productos = [];
 
-function verificarCorreo(){
-  const correo = document.getElementById("correoLogin").value.trim();
-  if(correo === ADMIN_CORREO){
-    document.getElementById("loginOverlay").style.display="none";
-    document.getElementById("form-producto").style.display="block";
-    document.getElementById("search-admin-wrapper").style.display="flex"; 
-    render();
-  } else { alert("Acceso denegado"); }
+async function api(metodo, data = null) {
+  const params = { method: metodo };
+  if(data) params.body = JSON.stringify(data);
+  const res = await fetch(URL_DB, params);
+  return await res.json();
 }
 
-function render(lista = productos){
+async function verificarCorreo() {
+  if(document.getElementById("correoLogin").value === ADMIN) {
+    document.getElementById("loginOverlay").style.display = "none";
+    document.getElementById("form-producto").style.display = "block";
+    const datos = await api('GET');
+    productos = datos ? Object.values(datos) : [];
+    render();
+  } else { alert("Acceso Denegado"); }
+}
+
+function render(lista = productos) {
   const div = document.getElementById("productos");
   div.innerHTML = "";
-  lista.forEach((p, index) => {
+  lista.forEach((p, i) => {
     const card = document.createElement("div");
     card.className = "card";
-    card.innerHTML = `
-      <img src="${p.foto || 'https://via.placeholder.com/150'}">
-      <h4 style="margin:8px 0;">${p.nombre}</h4>
-      <p style="font-weight:bold; color:#8B0000;">${p.precio}</p>
-      <button class="btn-action btn-delete" onclick="eliminar(${index})">Eliminar</button>
-    `;
+    card.innerHTML = `<img src="${p.foto}"><h4>${p.nombre}</h4><p style="font-weight:bold;color:#8B0000">${p.precio}</p><button onclick="eliminar(${i})" style="background:red;color:white;border:0;padding:8px;width:100%;border-radius:5px;cursor:pointer">Eliminar</button>`;
     div.appendChild(card);
   });
 }
 
-document.getElementById("form-producto").onsubmit = e => {
+document.getElementById("form-producto").onsubmit = async (e) => {
   e.preventDefault();
-  productos.push({
-    nombre: nombre.value, 
-    precio: precio.value, 
-    descripcion: descripcion.value, 
-    categoria: categoria.value, 
-    foto: document.getElementById("foto-url").value
-  });
-  localStorage.setItem("catalogo", JSON.stringify(productos));
+  productos.push({nombre:nombre.value, precio:precio.value, descripcion:descripcion.value, foto:document.getElementById("foto-url").value, categoria:"tecnologia"});
+  await api('PUT', productos);
   render();
   e.target.reset();
 };
 
-function eliminar(i){
-  if(confirm("¿Estás seguro de eliminar este producto?")){
+async function eliminar(i) {
+  if(confirm("¿Deseas eliminar este producto de la nube?")) {
     productos.splice(i, 1);
-    localStorage.setItem("catalogo", JSON.stringify(productos));
+    await api('PUT', productos);
     render();
   }
 }
 
-function buscar(){
+function buscar() {
   const f = document.getElementById("busquedaInput").value.toLowerCase();
   render(productos.filter(p => p.nombre.toLowerCase().includes(f)));
 }
