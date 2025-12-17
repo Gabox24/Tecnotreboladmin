@@ -75,14 +75,14 @@ function render(lista = productos) {
 
 document.getElementById("form-producto").onsubmit = async (e) => {
   e.preventDefault();
-  productos.push({nombre:nombre.value, precio:precio.value, descripcion:descripcion.value, foto:document.getElementById("foto-url").value, categoria:"tecnologia"});
+  productos.push({nombre:nombre.value, precio:precio.value, descripcion:descripcion.value, foto:document.getElementById("foto-url").value});
   await api('PUT', productos);
   render();
   e.target.reset();
 };
 
 async function eliminar(i) {
-  if(confirm("¿Deseas eliminar este producto de la nube?")) {
+  if(confirm("¿Eliminar este producto de la nube?")) {
     productos.splice(i, 1);
     await api('PUT', productos);
     render();
