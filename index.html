@@ -5,12 +5,10 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Panel Administrador - TECNO TREBOL</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
 <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
 
 <style>
-/* DISEÑO MANTENIDO */
 body{font-family:Arial;margin:0;background:#f5f5f5;color:#222}
 header{background:#8B0000;color:#fff;padding:10px 20px;box-shadow: 0 2px 10px rgba(0,0,0,0.1);}
 .header-container{max-width:1200px;margin:auto;display:flex;justify-content:space-between;align-items:center;}
@@ -19,11 +17,18 @@ form{background:#fff;padding:25px;border-radius:12px;box-shadow:0 4px 12px rgba(
 input, textarea, select{width:100%;padding:12px;border:1px solid #bbb;border-radius:8px;margin-top:6px;box-sizing: border-box;}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px;margin-top:30px;}
 .card{background:#fff;padding:14px;border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,0.1);text-align: center;}
-.card img{width:100%;height:180px;object-fit:cover;border-radius:8px;}
+
+/* AJUSTE PARA IMÁGENES 800x800 */
+.card img{
+  width:100%;
+  height:200px;
+  object-fit: contain; /* No recorta la imagen */
+  background-color: #fff;
+  border-radius:8px;
+}
+
 #loginOverlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);display:flex;justify-content:center;align-items:center;z-index:1000;}
 #loginBox{background:white;padding:30px;border-radius:12px;text-align:center;width:300px;}
-
-/* BOTONES */
 .btn-red{background:#8B0000;color:white;border:0;padding:10px;border-radius:6px;cursor:pointer;width:100%;margin-top:10px;font-weight: bold;}
 .btn-view-desc{background:#0056b3;color:white;border:0;padding:8px;border-radius:6px;cursor:pointer;width:100%;margin-top:5px;font-size:12px;}
 .desc-container{display:none; margin-top:10px; font-size:12px; color:#555; background:#f9f9f9; padding:8px; border-radius:5px; text-align: left;}
@@ -55,7 +60,6 @@ input, textarea, select{width:100%;padding:12px;border:1px solid #bbb;border-rad
     <label>URL de Foto:</label><input id="foto" required>
     <button type="submit" class="btn-red">Subir a Firebase</button>
   </form>
-
   <div id="productos" class="grid"></div>
 </div>
 
@@ -66,8 +70,7 @@ const db = firebase.database();
 const productosRef = db.ref("productos");
 
 function verificarCorreo() {
-  const correo = document.getElementById("correoLogin").value.trim();
-  if(correo === "gaboxxlopez28@gmail.com") {
+  if(document.getElementById("correoLogin").value.trim() === "gaboxxlopez28@gmail.com") {
     document.getElementById("loginOverlay").style.display = "none";
     document.getElementById("form-producto").style.display = "block";
     cargarProductos();
@@ -92,7 +95,6 @@ function cargarProductos() {
     const contenedor = document.getElementById("productos");
     contenedor.innerHTML = "";
     const data = snapshot.val();
-    
     if(data) {
       Object.keys(data).forEach(id => {
         const p = data[id];
@@ -101,10 +103,8 @@ function cargarProductos() {
             <img src="${p.foto}" id="display-img-${id}">
             <h3 id="display-nombre-${id}">${p.nombre}</h3>
             <p id="display-precio-${id}" style="font-weight:bold; color:#8B0000;">${p.precio}</p>
-            
             <button class="btn-view-desc" onclick="toggleDesc('${id}')">Ver descripción</button>
             <div id="display-desc-${id}" class="desc-container">${p.descripcion || 'Sin descripción'}</div>
-            
             <div id="actions-${id}">
                 <button class="btn-red" style="background:#e6a500; margin-bottom:5px;" onclick="habilitarEdicion('${id}')">
                     <i class="fas fa-edit"></i> Editar
@@ -119,31 +119,23 @@ function cargarProductos() {
   });
 }
 
-// FUNCIÓN PARA MOSTRAR/OCULTAR DESCRIPCIÓN
 function toggleDesc(id) {
     const desc = document.getElementById(`display-desc-${id}`);
     desc.style.display = (desc.style.display === "block") ? "none" : "block";
 }
 
 function habilitarEdicion(id) {
-    const nombreActual = document.getElementById(`display-nombre-${id}`).innerText;
-    const precioActual = document.getElementById(`display-precio-${id}`).innerText;
-    const descActual = document.getElementById(`display-desc-${id}`).innerText;
-    const fotoActual = document.getElementById(`display-img-${id}`).src;
-    const card = document.getElementById(`card-${id}`);
-
-    card.innerHTML = `
-        <label style="font-size:11px">Nombre:</label>
-        <input type="text" id="edit-nombre-${id}" class="edit-input" value="${nombreActual}">
-        <label style="font-size:11px">Precio:</label>
-        <input type="text" id="edit-precio-${id}" class="edit-input" value="${precioActual}">
-        <label style="font-size:11px">Descripción:</label>
-        <textarea id="edit-desc-${id}" class="edit-input" rows="3">${descActual}</textarea>
-        <label style="font-size:11px">URL Imagen:</label>
-        <input type="text" id="edit-foto-${id}" class="edit-input" value="${fotoActual}">
+    const nombre = document.getElementById(`display-nombre-${id}`).innerText;
+    const precio = document.getElementById(`display-precio-${id}`).innerText;
+    const desc = document.getElementById(`display-desc-${id}`).innerText;
+    const foto = document.getElementById(`display-img-${id}`).src;
+    document.getElementById(`card-${id}`).innerHTML = `
+        <label style="font-size:11px">Nombre:</label><input type="text" id="edit-nombre-${id}" class="edit-input" value="${nombre}">
+        <label style="font-size:11px">Precio:</label><input type="text" id="edit-precio-${id}" class="edit-input" value="${precio}">
+        <label style="font-size:11px">Descripción:</label><textarea id="edit-desc-${id}" class="edit-input" rows="3">${desc}</textarea>
+        <label style="font-size:11px">URL Imagen:</label><input type="text" id="edit-foto-${id}" class="edit-input" value="${foto}">
         <button class="btn-red" style="background:#28a745" onclick="actualizarProducto('${id}')">Guardar</button>
-        <button class="btn-red" style="background:#6c757d" onclick="cargarProductos()">Cancelar</button>
-    `;
+        <button class="btn-red" style="background:#6c757d" onclick="cargarProductos()">Cancelar</button>`;
 }
 
 function actualizarProducto(id) {
@@ -153,17 +145,10 @@ function actualizarProducto(id) {
         descripcion: document.getElementById(`edit-desc-${id}`).value,
         foto: document.getElementById(`edit-foto-${id}`).value
     };
-
-    db.ref("productos/" + id).update(nuevasFichas)
-        .then(() => alert("Producto actualizado"))
-        .catch(err => alert("Error al actualizar"));
+    db.ref("productos/" + id).update(nuevasFichas).then(() => alert("Actualizado"));
 }
 
-function eliminar(id) { 
-  if(confirm("¿Borrar producto?")) {
-    db.ref("productos/" + id).remove();
-  }
-}
+function eliminar(id) { if(confirm("¿Borrar?")) db.ref("productos/" + id).remove(); }
 </script>
 </body>
 </html>
